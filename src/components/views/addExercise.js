@@ -12,25 +12,38 @@ import Dialog, {
 import Button from "material-ui/Button";
 import Checkbox from "material-ui/Checkbox";
 import { FormGroup, FormControlLabel } from "material-ui/Form";
+
 class AddExercise extends Component {
   state = {
-    title: null,
+    title: "",
     sets: 3,
     reps: 8,
     trackPr: false
   };
   handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value
-    });
+    name === "sets" || name === "reps"
+      ? this.setState({
+          [name]: parseInt(event.target.value, 10)
+        })
+      : this.setState({
+          [name]: event.target.value
+        });
   };
-  handleSubmit = () => {
-    console.log(JSON.stringify(this.state));
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.handleDialogFormSubmit(this.state);
+    this.props.handleCloseDialog();
+    this.setState({
+      title: "",
+      sets: 3,
+      reps: 8,
+      trackPr: false
+    });
   };
   render() {
     return (
       <Dialog
-        open={this.props.handleOpenDialog}
+        open={this.props.dialogStatus}
         onRequestClose={this.props.handleCloseDialog}
       >
         <DialogTitle>
@@ -45,7 +58,7 @@ class AddExercise extends Component {
               <Checkbox
                 checked={this.state.trackPr}
                 onChange={this.handleChange("trackPr")}
-                value="trackPr"
+                value="true"
               />
             }
             label="Track PR?"
@@ -77,3 +90,4 @@ class AddExercise extends Component {
     );
   }
 }
+export default AddExercise;

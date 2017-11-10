@@ -1,10 +1,11 @@
-import React from "react";
+import React, { Component } from "react";
+import { NavLink } from "react-router-dom";
 import { withStyles } from "material-ui/styles";
 import classNames from "classnames";
 import Drawer from "material-ui/Drawer";
 import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
-import List from "material-ui/List";
+import List, { ListItem, ListItemText } from "material-ui/List";
 import Typography from "material-ui/Typography";
 import Divider from "material-ui/Divider";
 import IconButton from "material-ui/IconButton";
@@ -84,9 +85,10 @@ const styles = theme => ({
   }
 });
 
-class PersistentDrawer extends React.Component {
+class Layout extends Component {
   state = {
-    open: false
+    open: true,
+    checked: 1
   };
 
   handleDrawerToggle = () => {
@@ -97,8 +99,14 @@ class PersistentDrawer extends React.Component {
     this.setState({ open: false });
   };
 
+  handleNavToggle = value => {
+    this.setState({
+      checked: value
+    });
+  };
+
   render() {
-    const { classes, theme } = this.props;
+    const { children, classes, theme } = this.props;
 
     return (
       <div className={classes.appFrame}>
@@ -134,18 +142,51 @@ class PersistentDrawer extends React.Component {
         >
           <div className={classes.drawerInner}>
             {/* <div className={classes.drawerHeader}>
-              <IconButton onClick={this.handleDrawerClose}>
+                <IconButton onClick={this.handleDrawerClose}>
                 {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
+                <ChevronRightIcon />
                 ) : (
-              <ChevronLeftIcon />
+                <ChevronLeftIcon />
                 )}
-              </IconButton>
-              </div>
+                </IconButton>
+                </div>
             <Divider /> */}
-            <List className={classes.list}>Hello World</List>
-            <Divider />
-            <List className={classes.list}>More World</List>
+            <List className={classes.list}>
+              <NavLink
+                exact
+                to="/"
+                style={{ textDecoration: "none" }}
+                activeStyle={{ backgroundColor: "salmon" }}
+              >
+                <ListItem
+                  button
+                  onClick={() => this.handleNavToggle(1)}
+                  style={{ backgroundColor: "inherit" }}
+                >
+                  <Typography type="body1" noWrap>
+                    Home
+                  </Typography>
+                </ListItem>
+              </NavLink>
+              <Divider />
+              <NavLink
+                exact
+                to="/addworkout"
+                style={{ textDecoration: "none" }}
+                activeStyle={{ backgroundColor: "salmon" }}
+              >
+                <ListItem
+                  button
+                  onClick={() => this.handleNavToggle(2)}
+                  style={{ backgroundColor: "inherit" }}
+                >
+                  <Typography type="body1" noWrap>
+                    Add Workout
+                  </Typography>
+                </ListItem>
+              </NavLink>
+              <Divider />
+            </List>
           </div>
         </Drawer>
         <main
@@ -154,13 +195,14 @@ class PersistentDrawer extends React.Component {
             this.state.open && classes.contentShift
           )}
         >
-          <Typography type="body1" noWrap>
+          {/* <Typography type="body1" noWrap>
             {"You think water moves fast? You should see ice."}
-          </Typography>
+          </Typography> */}
+          {children}
         </main>
       </div>
     );
   }
 }
 
-export default withStyles(styles, { withTheme: true })(PersistentDrawer);
+export default withStyles(styles, { withTheme: true })(Layout);
