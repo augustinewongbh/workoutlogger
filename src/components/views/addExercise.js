@@ -40,6 +40,11 @@ class AddExercise extends Component {
       trackPr: false
     });
   };
+  toggleCheckBox = () => {
+    this.setState({
+      trackPr: !this.state.trackPr
+    });
+  };
   render() {
     return (
       <Dialog
@@ -50,6 +55,7 @@ class AddExercise extends Component {
           <TextField
             id="title"
             label="Exercise Name"
+            autoFocus
             value={this.state.title}
             onChange={this.handleChange("title")}
           />
@@ -57,8 +63,7 @@ class AddExercise extends Component {
             control={
               <Checkbox
                 checked={this.state.trackPr}
-                onChange={this.handleChange("trackPr")}
-                value="true"
+                onChange={this.toggleCheckBox}
               />
             }
             label="Track PR?"

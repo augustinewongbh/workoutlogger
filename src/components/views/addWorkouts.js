@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+
 import { withStyles } from "material-ui/styles";
 import Paper from "material-ui/Paper";
 import Button from "material-ui/Button";
@@ -12,6 +13,10 @@ import Divider from "material-ui/Divider";
 import Grid from "material-ui/Grid";
 import AddExercise from "./addExercise";
 import Layout from "../layout";
+
+import { connect } from "react-redux";
+import { addWorkoutForm } from "../actions";
+
 const styles = theme => ({
   root: {
     height: "100%",
@@ -92,51 +97,79 @@ class AddWorkouts extends Component {
     });
     console.log(temp);
   };
+  handleFormSubmit = e => {
+    e.preventDefault();
+    const { title, days, exercises } = this.state;
+    this.props.addWorkoutForm(title, days, exercises);
+    this.setState({
+      title: "",
+      exercises: []
+    });
+  };
   render() {
     const { classes } = this.props;
     let { days } = this.state;
     return (
       <Layout>
         <Paper className={classes.root}>
-          <TextField
-            id="title"
-            label="Exercise Name"
-            value={this.state.title}
-            onChange={this.handleChange("title")}
-          />
-          <Divider />
-          <Typography type="headline">Day</Typography>
-          <FormGroup row style={{ justifyContent: "center" }}>
-            {Object.keys(days).map(day => (
-              <ButtonBase
-                key={day}
-                className={classes.avatarButton}
-                focusRipple
-                onClick={() => this.handleDaysClick(day)}
+          <form onSubmit={this.handleFormSubmit}>
+            <TextField
+              id="title"
+              label="Exercise Name"
+              value={this.state.title}
+              onChange={this.handleChange("title")}
+            />
+            <Divider />
+            <div style={{ margin: "1em 10px" }}>
+              <Typography type="headline">Day</Typography>
+              <FormGroup
+                row
+                style={{ padding: "0.5em 0", justifyContent: "center" }}
               >
-                <Avatar
-                  style={days[day].selected ? { backgroundColor: "red" } : null}
-                >
-                  {days[day].title}
-                </Avatar>
-              </ButtonBase>
-            ))}
-          </FormGroup>
-          <Typography>Exercise</Typography>
-          <List>
-            {console.log(this.state.exercises) //.map(exercise=><ListItem>exercise.title)</ListItem>
-            }
-          </List>
-          <Button onClick={this.handleOpenDialog}>Add Workout</Button>
-          <AddExercise
-            dialogStatus={this.state.dialogStatus}
-            handleCloseDialog={this.handleCloseDialog}
-            handleDialogFormSubmit={this.handleDialogFormSubmit}
-          />
+                {Object.keys(days).map(day => (
+                  <ButtonBase
+                    key={day}
+                    className={classes.avatarButton}
+                    focusRipple
+                    onClick={() => this.handleDaysClick(day)}
+                  >
+                    <Avatar
+                      style={
+                        days[day].selected ? { backgroundColor: "red" } : null
+                      }
+                    >
+                      {days[day].title}
+                    </Avatar>
+                  </ButtonBase>
+                ))}
+              </FormGroup>
+            </div>
+            <Typography type="headline">Exercise</Typography>
+            <List>
+              {this.state.exercises &&
+                this.state.exercises.map(exercise => (
+                  <ListItem key={exercise.title}>{exercise.title}</ListItem>
+                ))}
+            </List>
+            <Button onClick={this.handleOpenDialog}>Add Exercise</Button>
+            <AddExercise
+              dialogStatus={this.state.dialogStatus}
+              handleCloseDialog={this.handleCloseDialog}
+              handleDialogFormSubmit={this.handleDialogFormSubmit}
+            />
+            <Button onClick={this.handleFormSubmit}>Confirm</Button>
+          </form>
         </Paper>
       </Layout>
     );
   }
 }
-
-export default withStyles(styles)(AddWorkouts);
+const mapDispatchToProps = dispatch => {
+  return {
+    addWorkoutForm: (title, days, exercises) =>
+      dispatch(addWorkoutForm(title, days, exercises))
+  };
+};
+export default connect(null, mapDispatchToProps)(
+  withStyles(styles)(AddWorkouts)
+);

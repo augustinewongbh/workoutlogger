@@ -1,97 +1,86 @@
 import React, { Component } from "react";
+import moment from "moment";
+import { connect } from "react-redux";
 import { withStyles } from "material-ui/styles";
-//import Avatar from "material-ui/Avatar";
-import classnames from "classnames";
-import Collapse from "material-ui/transitions/Collapse";
-import IconButton from "material-ui/IconButton";
+// import Avatar from "material-ui/Avatar";
+// import Divider from "material-ui/Divider";
 import Typography from "material-ui/Typography";
-import Divider from "material-ui/Divider";
+import ListSubheader from "material-ui/List/ListSubheader";
+import List, { ListItem, ListItemText } from "material-ui/List";
+import Collapse from "material-ui/transitions/Collapse";
+import ExpandLess from "material-ui-icons/ExpandLess";
+import ExpandMore from "material-ui-icons/ExpandMore";
+
 import Card, {
   CardHeader,
   CardMedia,
   CardContent,
   CardActions
 } from "material-ui/Card";
-import ExpandMoreIcon from "material-ui-icons/ExpandMore";
-import List, { ListItem, ListItemText } from "material-ui/List";
-import ListSubheader from "material-ui/List/ListSubheader";
+import Paper from "material-ui/Paper";
+import TextField from "material-ui/TextField";
+
 const styles = theme => ({
-  expand: {
-    transform: "rotate(0deg)",
-    transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest
-    })
+  listroot: {
+    width: "100%",
+    overflow: "auto",
+    maxHeight: 300
   },
-  expandOpen: {
-    transform: "rotate(180deg)"
-  },
-  flexGrow: {
-    flex: "1 1 auto"
+  nested: {
+    paddingLeft: theme.spacing.unit * 4
   }
 });
-const ExerciseList = props => (
-  <List subheader={<ListSubheader>{props.exercise.title}</ListSubheader>}>
-    {
-      // set (index), weight rep
-    }
-    {props.exercise.details &&
-      props.exercise.details.map((set, index) => (
-        <ListItem>
-          <ListItemText>{index}</ListItemText>
-          <ListItemText>{set.weight}</ListItemText>
-          <ListItemText>{set.weight}</ListItemText>
-        </ListItem>
-      ))}
-  </List>
-);
-class HomeCard extends Component {
-  state = {
-    expandCard: false
-  };
-  handleExpandClick = () => {
-    this.setState({ expandCard: !this.state.expandCard });
-  };
+
+class ExerciseList extends Component {
   render() {
-    const { classes, exercises } = this.props;
+    const { title, latestlog } = this.props;
+    return (
+      <List subheader={<ListSubheader>{title}</ListSubheader>}>
+        {latestlog.map((res, idx) => (
+          <ListItem>
+            <Typography>
+              <ListItemText primary={idx} />
+              <ListItemText secondary={res.weight} />
+              <ListItemText secondary={res.reps} />
+            </Typography>
+          </ListItem>
+        ))}
+      </List>
+    );
+  }
+}
+class HomeCard extends Component {
+  render() {
+    const { exercises, classes } = this.props;
+    const { title, day, exercisesId } = this.props.workouts;
     return (
       <Card>
-        <CardHeader>
-          <Typography>{this.props.day}</Typography>
-          <Typography>{this.props.title}</Typography>
-        </CardHeader>
-        {this.props.exercise && (
+        {!exercises ? (
+          <CardContent>"LOADING..."</CardContent>
+        ) : (
           <div>
+            <CardHeader title={title} subheader={day} />
             <CardContent>
-              <ExerciseList exercise={this.props.exercises.slice(0, 1)} />
+              {exercisesId &&
+                exercisesId.map(key => (
+                  <ExerciseList
+                    title={exercises[key].title}
+                    latestlog={
+                      exercises[key].log[exercises[key].log.length - 1]
+                    }
+                  />
+                ))}
             </CardContent>
-            <CardActions>
-              <IconButton
-                className={classnames(classes.expand, {
-                  [classes.expandOpen]: this.state.expandCard
-                })}
-                onClick={this.handleExpandClick}
-                aria-expanded={this.state.expandCard}
-                aria-label="Show more"
-              >
-                <ExpandMoreIcon />
-              </IconButton>
-            </CardActions>
-            <Collapse
-              in={this.state.expandCard}
-              transitionDuration="auto"
-              unmountOnExit
-            >
-              {this.props.exercises.slice(1).map(exercise => (
-                <CardContent>
-                  <ExerciseList exercise={exercise} />
-                </CardContent>
-              ))}
-            </Collapse>
           </div>
         )}
       </Card>
     );
   }
 }
-
-export default withStyles(styles)(HomeCard);
+const mapStateToProps = state => {
+  return {
+    workouts: state.workouts,
+    exercises: state.exercises
+  };
+};
+export default connect(mapStateToProps)(withStyles(styles)(HomeCard));

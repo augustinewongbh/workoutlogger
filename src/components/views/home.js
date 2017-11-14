@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Layout from "../layout";
 //import { withStyles } from "material-ui/styles";
+import moment from "moment";
 import Avatar from "material-ui/Avatar";
 import Divider from "material-ui/Divider";
 import Paper from "material-ui/Paper";
@@ -11,19 +12,33 @@ class Home extends Component {
   constructor() {
     super();
     this.state = {
-      a: ""
+      today: moment()
     };
   }
+  // componentWillMount = () => {
+  //   this.setState({
+  //     today: moment()
+  //       .format("ddd")
+  //       .toLowerCase()
+  //   });
+  // };
   render() {
     return (
       <Layout>
         <Paper>
-          <div>
+          {/* <div>
             <Avatar>
               <FaceIcon />
             </Avatar>
             <Typography>Welcome</Typography>
-          </div>
+          </div> */}
+          {console.log(
+            this.state.today
+              .add(1, "d")
+              .format("ddd")
+              .toLowerCase()
+          )}
+          <HomeCard />
         </Paper>
       </Layout>
     );

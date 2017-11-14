@@ -20,7 +20,7 @@ const styles = theme => ({
     position: "relative",
     display: "flex",
     width: "100%",
-    height: "100%"
+    minHeight: "100vh"
   },
   appBar: {
     position: "absolute",
@@ -43,6 +43,9 @@ const styles = theme => ({
   },
   hide: {
     display: "none"
+  },
+  list: {
+    paddingTop: 0
   },
   drawerPaper: {
     position: "relative",
@@ -182,6 +185,23 @@ class Layout extends Component {
                 >
                   <Typography type="body1" noWrap>
                     Add Workout
+                  </Typography>
+                </ListItem>
+              </NavLink>
+              <Divider />
+              <NavLink
+                exact
+                to="/workoutsList"
+                style={{ textDecoration: "none" }}
+                activeStyle={{ backgroundColor: "salmon" }}
+              >
+                <ListItem
+                  button
+                  onClick={() => this.handleNavToggle(2)}
+                  style={{ backgroundColor: "inherit" }}
+                >
+                  <Typography type="body1" noWrap>
+                    Workouts List
                   </Typography>
                 </ListItem>
               </NavLink>
